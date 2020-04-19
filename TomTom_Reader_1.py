@@ -68,6 +68,8 @@ c = v1-2
 h140 = 1000
 h130 = 1000
 h120 = 1000
+h110 = 1000
+h100 = 1000
 for r in range (h):
     x = im[r][c][0:3]
     if np.all(x > 235) and np.all(x < 250):
@@ -80,6 +82,12 @@ for r in range (h):
         elif h130 != 1000 and h120 == 1000 and r > (h130 + 4):
             print('horiz 120 row at row',r)
             h120 = r
+        elif h120 != 1000 and h110 == 1000 and r > (h120 + 4):
+            print('horiz 110 row at row',r)
+            h110 = r
+        elif h110 != 1000 and h100 == 1000 and r > (h110 + 4):
+            print('horiz 100 row at row',r)
+            h100 = r
         else:
             pass
     else:
@@ -89,10 +97,52 @@ for r in range (h):
 h0 = int(((h120-h140) * 6.5)+ h130)
 print('horiz 0 row (x-axis) at row',h0)
 
-#5 read across to second full vert bar
-#6 impute end column
-#6.5 find start???
+#5 find start of horiz bar
+for i in range(v1,0,-1):
+    x = im[h140][i][0:3]
+    if np.all(x < 250):
+        pass
+    else:
+        v0 = i
+        break
+print('start of data at column',v0)
+
+#6 find end of horiz bar
+for i in range(v1,w):
+    x = im[h140][i][0:3]
+    if np.all(x < 250):
+        pass
+    else:
+        vmax = i
+        break
+print('start of data at column',vmax)
+###this isn't right
+
+
 #7 scan for red line
+redlist = []
+for c in range (v0+2,vmax):
+    red = 0
+    for r in range (h):
+        x = im[r][c]
+        if np.any(x < 50) and red == 0:
+            red +=1
+            redspot = r
+        else:
+            pass
+    if red > 0:
+        redlist.append(((redspot-h0)/(h100-h0)))
+    else:
+        vmaxred = c
+        break
+#clean for red now circle
+y = len(redlist)
+#circ = (redlist[y-6]+redlist[y-1])/2
+del redlist[y-6:y]
+vmaxact = (len(redlist))
+
+
+
 #8 scan for blue line
 #9 infill blue line
 #10 generate data
@@ -107,27 +157,14 @@ samp = im[0:256][125]
 #for i in range(256):
 #    if np.all(samp[i] > 254):
 #        pass
-#    else:
+#    else:  
+    
  #   print(i, samp[i])
     
 
 #loop through array
 #for i in range ():
 #    for j in range (866):
-redlist = []
-for c in range (1221):
-    red = 0
-    for r in range (256):
-        x = im[r][c]
-        if np.any(x < 50) and red == 0:
-            red +=1
-            redspot = r
-        else:
-            pass
-    if red > 0:
-        redlist.append(255-redspot)
-    else:
-        redlist.append(0)
 
 bluelist = []
 for h in range (1221):
