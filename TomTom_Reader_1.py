@@ -139,71 +139,78 @@ for c in range (v0+2,vmax):
 y = len(redlist)
 #circ = (redlist[y-6]+redlist[y-1])/2
 del redlist[y-6:y]
-vmaxact = (len(redlist))
+vmaxact = (len(redlist)+v0+2)
 
 
 
 #8 scan for blue line
-#9 infill blue line
-#10 generate data
-#11 store data
-
-#for r in range (256):
-#    print(im[r][300])
-
-#samp = im[0][0:1220]
-samp = im[0:256][125]
-
-#for i in range(256):
-#    if np.all(samp[i] > 254):
-#        pass
-#    else:  
-    
- #   print(i, samp[i])
-    
-
-#loop through array
-#for i in range ():
-#    for j in range (866):
-
+#blue dash [164, 197, 232, 255]
 bluelist = []
-for h in range (1221):
+bluetemp = []
+for c in range (v0+2,vmaxact):
     blue = 0
-    for i in range (256):
-        x = im[i][h]
-        if np.any(x < 180) and np.all(x > 100) and blue == 0:
+    for r in range (h110+5               ,h0):
+        x = im[r][c][0:3]
+#        if np.any(x < 200) and np.all(x > 150) and blue == 0:
+        if (x[2] > 220) and (x[0] < 180) and (x[0] > 140) and blue == 0:
             blue +=1
-            bluespot = i
+            bluespot = r
         else:
             pass
     if blue > 0:
-        bluelist.append(255-bluespot)
+        bluetemp.append(bluespot)
+        bluelist.append(((bluespot-h0)/(h100-h0)))
     else:
-        bluelist.append(0)
+        bluelist.append(999)
+        bluetemp.append(999)
 
-#pickl up gaps in dotted line
-for i in range(len(bluelist)):
-    if i < 51:
-        bluelist[i] = 0
+print(bluetemp[0:20])
+
+#9 infill blue line
+b0 = 0
+#This is the first element of bluelist with a dash
+
+#Can't forwardfill if first element is 999
+for i in range(len(bluelist)-1):
+    if bluelist[i] == 999:
+        pass
     else:
-        if bluelist[i] < 40 :
-            bluelist[i] = bluelist[i-1]
-        else:
-            pass
+        b0 = i
+        break
+
+#if first element <> 999, ignore, otherwise bfill
+if b0 == 0:
+    pass
+else:
+    for i in range (b0,0,-1):
+        bluelist[i] = bluelist[i+1]
+
+#now ffill
+for i in range(len(bluelist)):
+    if bluelist[i] == 999:
+        bluelist[i] = bluelist[i-1]
+    else:
+        pass
+
+
+#10 generate data
+#11 store data
+
 
 #movavg
+'''
 newbluelist = bluelist.copy()
 for i in range(len(newbluelist)):
     if i < 51:
         newbluelist[i] = 0
     else:
         newbluelist[i] = sum(bluelist[i-2:i])/3
+'''
 
 
-
-plt.plot(redlist)
+plt.plot(redlist, color='red')
 #plt.ylabel('some numbers')
-plt.show()
+#plt.show()
 
 plt.plot(bluelist)
 #plt.ylabel('some numbers')
