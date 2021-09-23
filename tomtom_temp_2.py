@@ -14,6 +14,8 @@ countrylist = ['Argentina', 'Brazil', 'Chile','Colombia','Peru','Mexico','United
                'Greece','Poland','Hungary','Czechia','Russia','South Africa','China','India','Pakistan','Taiwan',
                'South Korea','Indonesia','Malaysia','Thailand','Philippines','Kuwait','Egypt']
 
+countrylist = ['Argentina']
+
 outdict = {}
 
 for i in countrylist:
@@ -22,11 +24,12 @@ for i in countrylist:
     if len(df1.groupby('city').count()) == 1:
         df1.set_index('date', inplace = True)
 #       want to do .rolling(7).mean()
-        outdict[i] = df1['congestion']
+        avgs = df1['congestion']
     else:
-        outdict[i] = df1.groupby("date")['congestion'].mean()
+        avgs = df1.groupby("date")['congestion'].mean()
+    outdict[i] = avgs.rolling(7).mean()
 
     
 userfilename='temp_out.csv'
 #push df to csv
-outdict['Brazil'].to_csv(userfilename)
+outdict['Argentina'].to_csv(userfilename)
